@@ -57,7 +57,7 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
                 universities_candidates[u].add(s)
                 free_students[s] = False
                 free_students[stu_lowest_preference] = True
-        nb_iterations =+ 1
+        nb_iterations += 1
     return [universities_candidates,nb_iterations]
 
 
