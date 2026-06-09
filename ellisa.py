@@ -5,7 +5,7 @@ import pandas as pd
 def lowest_preferred_candidate (universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> int:
     currentStudents = list(currentStudents)
     min = None
-    for i in range (1,len(currentStudents)) :
+    for i in range (len(currentStudents)) :
         #if there is a student with that is less preferred over new student
         if universities[u][s]<universities[u][currentStudents[i]] :
             if universities[u][currentStudents[i]]<universities[u][min] :
