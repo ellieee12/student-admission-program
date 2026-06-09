@@ -23,16 +23,24 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
     school_partner = [set() for _ in range(nb_schools)]
     nb_iterations = 0
     if changeBidding :
+        # set proposal index to 0
         next_proposal = [0] * nb_schools
+        # while all schools are not yet full and the schools have finished their proposals
         while any(len(school_partner[s]) < schools_capacity[s] and next_proposal[s] < nb_students for s in range(nb_schools)) :
+            # get the next school that is not full and has available place 
             sch = next((sch for sch in range(nb_schools) if len(school_partner[sch]) < schools_capacity[sch] and next_proposal[sch] != nb_students), None)
+            # the school proposes to the n first candidates according to its remaining capacity or the minimum proposition left
             for _ in range(min(schools_capacity[sch] - len(school_partner[sch]), nb_students - next_proposal[sch])):
+                #identify which student to propose to
                 stu = schools[sch][next_proposal[sch]]
+                #increase proposal index by 1
                 next_proposal[sch] += 1
+                #if the student does not have a university, they are matched
                 if student_partner[stu] is None:
                     student_partner[stu] = sch
                     school_partner[sch].add(stu)
                 else:
+                    # if the student already has a university matched, we identify the student's preference 
                     sch1 = student_partner[stu]
                     if prefers(students, stu, sch, sch1):
                         student_partner[stu] = sch
@@ -40,6 +48,7 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
                         school_partner[sch].add(stu)
             nb_iterations += 1
     else:
+
         next_proposal = [0] * nb_students
         #while there is a student without a university and has not finished his proposals
         while any(student_partner[s] is None and next_proposal[s] < nb_schools for s in range(nb_students)):
@@ -62,6 +71,7 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
                     student_partner[s] = u
                     student_partner[stu_lowest_preference] = None
             nb_iterations += 1
+    # check if there is enough places for the amount students
     if sum(1 for v in student_partner.values() if v is not None) < nb_students:
         print("there is not enough space for all students")
     return school_partner, nb_iterations
