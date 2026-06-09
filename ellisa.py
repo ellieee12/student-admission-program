@@ -2,15 +2,6 @@ from typing import List
 from collections import defaultdict
 import pandas as pd
 
-
-# Check if woman prefers m over current partner m1
-def prefers(universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> bool:
-    currentStudents = list(currentStudents)
-    for i in range(len(currentStudents)):
-        if universities[u][s]<universities[u][currentStudents[i]] :
-            return True
-    return False
-
 def lowest_preferred_candidate (universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> int:
     currentStudents = list(currentStudents)
     min = None
