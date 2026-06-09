@@ -64,4 +64,5 @@ if __name__ == '__main__':
     ]
 
     [result, count] = stableMarriage(schools, students, schools_capacity)
+    print(result)
     display_assignment_table(result, students, count)
