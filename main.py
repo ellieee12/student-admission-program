@@ -48,7 +48,6 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
                         school_partner[sch].add(stu)
             nb_iterations += 1
     else:
-
         next_proposal = [0] * nb_students
         #while there is a student without a university and has not finished his proposals
         while any(student_partner[s] is None and next_proposal[s] < nb_schools for s in range(nb_students)):
