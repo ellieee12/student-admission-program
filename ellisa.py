@@ -23,21 +23,16 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
     # universities_candidates = [[-2]*cols]*rows
     
     # man's current partners
-    student_current_uni = [-1] * nb_students
+    student_current_uni = defaultdict(lambda: None)
     
     # next proposal index
     next_proposal = [0] * nb_students
-    
-    # Free Men
-    free_students = [True] * nb_students
-
-    free_count = nb_students
 
     nb_iterations = 0
 
-    while free_count > 0:
+    while len(student_current_uni) < nb_students:
         #finds first free students in the list
-        s = next((s for s in range(nb_students) if free_students[s]), None)
+        s = next((s for s in range(nb_students) if student_current_uni[s] is None), None)
         if (next((sch for sch in range(nb_universities) if len(universities_candidates[sch]) < universities_capacity[sch]), None)) is None:
             print("there is not enough space for all students")
             return [universities_candidates,nb_iterations]
@@ -49,8 +44,6 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
         if len(universities_candidates[u])<universities_capacity[u] : 
             universities_candidates[u].add(s)
             student_current_uni[s] = u
-            free_students[s] = False
-            free_count -= 1
         else : 
             # if the university prefers s over one of current students
             if stu_lowest_preference := lowest_preferred_candidate(universities,u,s,universities_candidates[u]) is not None :
@@ -58,8 +51,6 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
                 universities_candidates[u].add(s)
                 student_current_uni[s] = u
                 student_current_uni[stu_lowest_preference] = -1
-                free_students[s] = False
-                free_students[stu_lowest_preference] = True
         nb_iterations += 1
     return [universities_candidates,nb_iterations]
 
