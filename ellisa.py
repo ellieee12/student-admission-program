@@ -1,41 +1,33 @@
 from typing import List
 from collections import defaultdict
 import pandas as pd
+import random
 
-def lowest_preferred_candidate (universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> int:
+def lowest_preferred_candidate(universities, u, s, currentStudents):
     currentStudents = list(currentStudents)
-    min = None
-    for i in range (len(currentStudents)) :
-        #if there is a student with that is less preferred over new student
-        if universities[u][s]<universities[u][currentStudents[i]] :
-            if universities[u][currentStudents[i]]<universities[u][min] :
-                min = universities[u][currentStudents[i]]
-    return min
+    worst = None
+    for candidate in currentStudents:
+        # university prefers s over this candidate (higher rank = less preferred)
+        if universities[u][s] < universities[u][candidate]:
+            if worst is None or universities[u][candidate] > universities[u][worst]:
+                worst = candidate  # store the student INDEX, not the rank
+    return worst
 
 def universitiesChooseStudents(universities: List[List[int]], students: List[List[int]], universities_capacity : List[int]) :
     nb_students = len(students)
     nb_universities = len(universities)
-    # universities_partner = defaultdict(lambda: None)
     universities_candidates = [set() for _ in range(nb_universities)]
-
-    #Initialize all universities and students to free
-    # rows,cols = (nb_universities,max(uni_capabilites))
-    # universities_candidates = [[-2]*cols]*rows
-    
-    # man's current partners
     student_current_uni = defaultdict(lambda: None)
-    
     # next proposal index
     next_proposal = [0] * nb_students
 
     nb_iterations = 0
-
-    while len(student_current_uni) < nb_students:
+    #while there is a student without a university and has not finished his proposals
+    while any(student_current_uni[s] is None and next_proposal[s] < nb_universities
+    for s in range(nb_students)):
         #finds first free students in the list
-        s = next((s for s in range(nb_students) if student_current_uni[s] is None), None)
-        if (next((sch for sch in range(nb_universities) if len(universities_candidates[sch]) < universities_capacity[sch]), None)) is None:
-            print("there is not enough space for all students")
-            return [universities_candidates,nb_iterations]
+        s = next((s for s in range(nb_students) if student_current_uni[s] is None and next_proposal[s] != nb_universities), None)
+
         #identify which school to propose to
         u = students[s][next_proposal[s]]
         #avances proposal index of their unasked school
@@ -46,38 +38,17 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
             student_current_uni[s] = u
         else : 
             # if the university prefers s over one of current students
-            if stu_lowest_preference := lowest_preferred_candidate(universities,u,s,universities_candidates[u]) is not None :
+            if (stu_lowest_preference := lowest_preferred_candidate(universities, u, s, universities_candidates[u])) is not None:
                 universities_candidates[u].remove(stu_lowest_preference)
                 universities_candidates[u].add(s)
                 student_current_uni[s] = u
-                student_current_uni[stu_lowest_preference] = -1
+                student_current_uni[stu_lowest_preference] = u
+                
         nb_iterations += 1
+    if sum(1 for v in student_current_uni.values() if v is not None) < nb_students:
+        print("there is not enough space for all students")
     return [universities_candidates,nb_iterations]
 
-
-
-
-
-    #     # If w is free
-    #     if w_partner[w] == -1:
-    #         w_partner[w] = m
-    #         m_partner[m] = w
-    #         free_man[m] = False
-    #         free_count -= 1
-    #     else:
-    #         m1 = w_partner[w]
-
-    #         # If w prefers m over current partner
-    #         if prefers(women, w, m, m1):
-    #             w_partner[w] = m 
-    #             m_partner[m] = w
-
-    #             free_man[m] = False
-    #             free_man[m1] = True
-    #     nb_iterations=nb_iterations+1
-
-    # print(nb_iterations)
-    # return m_partner
 def display_assignment_table(school_partner: List[set], students: List[List[int]], nb_iteration: int):
     rows = []
     for sch, students_set in enumerate(school_partner):
@@ -92,18 +63,37 @@ def display_assignment_table(school_partner: List[set], students: List[List[int]
     df_assignments.index += 1
     print(df_assignments.to_string())
     print(f"Number of iteration: {nb_iteration}")
+
+
+def generate_tables(n, m, c):
+    table1 = []
+    for _ in range(n):
+        row = list(range(m))
+        random.shuffle(row)
+        table1.append(row)
+
+    table2 = []
+    for _ in range(m):
+        row = list(range(n))
+        random.shuffle(row)
+        table2.append(row)
+
+    a = random.sample(range(1,c),n -1 ) + [0, c]
+    table3 = [a[i+1] - a[i] for i in range(len(a) - 1)]
+
+    return table1, table2, table3
+
 if __name__ == '__main__':
-    n_students = 6
-    n_universities = 4
+    universities, students, universities_capacity = generate_tables(9, 20, 15)
 
     # universities[u][s] = rank university u gives to student s (lower = more preferred)
     universities = [
         [0, 2, 4, 5, 1, 3],  # Uni 0: prefers s0 > s4 > s1 > s5 > s2 > s3
-        [3, 0, 1, 4, 5, 2],  # Uni 1: prefers s1 > s2 > s5 > s0 > s3 > s4
+        [3, 1, 2, 4, 5, 0],  # Uni 1: prefers s1 > s2 > s5 > s0 > s3 > s4
         [5, 1, 3, 0, 2, 4],  # Uni 2: prefers s3 > s1 > s4 > s2 > s5 > s0
         [2, 4, 0, 3, 1, 5],  # Uni 3: prefers s2 > s4 > s0 > s3 > s1 > s5
     ]
-    universities_capacity = [1, 1, 1, 2]  # total capacity = 7 > 6 students, all should be matched
+    universities_capacity = [1, 1, 1, 1]  # total capacity = 7 > 6 students, all should be matched
 
     # students[s][i] = university at position i in student s's preference list
     students = [
@@ -114,6 +104,8 @@ if __name__ == '__main__':
         [0, 1, 3, 2],  # s4: prefers Uni0 > Uni1 > Uni3 > Uni2
         [1, 3, 0, 2],  # s5: prefers Uni1 > Uni3 > Uni0 > Uni2
     ]
+
+    print(universities_capacity)
 
     [result,count] = universitiesChooseStudents(universities, students, universities_capacity)
     display_assignment_table(result, universities, count)
