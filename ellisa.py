@@ -39,6 +39,9 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
     while free_count > 0:
         #finds first free students in the list
         s = next((s for s in range(nb_students) if free_students[s]), None)
+        if (next((sch for sch in range(nb_universities) if len(universities_candidates[sch]) < universities_capacity[sch]), None)) is None:
+            print("there is not enough space for all students")
+            return [universities_candidates,nb_iterations]
         #identify which school to propose to
         u = students[s][next_proposal[s]]
         #avances proposal index of their unasked school
@@ -55,6 +58,8 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
                 stu_lowest_preference = lowest_preferred_candidate(universities,u,s,universities_candidates[u])
                 universities_candidates[u].remove(stu_lowest_preference)
                 universities_candidates[u].add(s)
+                student_current_uni[s] = u
+                student_current_uni[stu_lowest_preference] = -1
                 free_students[s] = False
                 free_students[stu_lowest_preference] = True
         nb_iterations += 1
@@ -115,7 +120,7 @@ if __name__ == '__main__':
         [5, 1, 3, 0, 2, 4],  # Uni 2: prefers s3 > s1 > s4 > s2 > s5 > s0
         [2, 4, 0, 3, 1, 5],  # Uni 3: prefers s2 > s4 > s0 > s3 > s1 > s5
     ]
-    universities_capacity = [2, 2, 1, 2]  # total capacity = 7 > 6 students, all should be matched
+    universities_capacity = [1, 1, 1, 2]  # total capacity = 7 > 6 students, all should be matched
 
     # students[s][i] = university at position i in student s's preference list
     students = [
