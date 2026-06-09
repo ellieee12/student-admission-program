@@ -11,7 +11,15 @@ def prefers(universities: List[List[int]], u: int, s: int, currentStudents: List
             return True
     return False
 
-    
+def lowest_preferred_candidate (universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> int:
+    currentStudents = list(currentStudents)
+    min = None
+    for i in range (1,len(currentStudents)) :
+        #if there is a student with that is less preferred over new student
+        if universities[u][s]<universities[u][currentStudents[i]] :
+            if universities[u][currentStudents[i]]<universities[u][min] :
+                min = universities[u][currentStudents[i]]
+    return min
 
 def universitiesChooseStudents(universities: List[List[int]], students: List[List[int]], universities_capacity : List[int]) :
     nb_students = len(students)
@@ -54,8 +62,7 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
             free_count -= 1
         else : 
             # if the university prefers s over one of current students
-            if prefers(universities,u,s,universities_candidates[u]) :
-                stu_lowest_preference = lowest_preferred_candidate(universities,u,s,universities_candidates[u])
+            if stu_lowest_preference := lowest_preferred_candidate(universities,u,s,universities_candidates[u]) is not None :
                 universities_candidates[u].remove(stu_lowest_preference)
                 universities_candidates[u].add(s)
                 student_current_uni[s] = u
@@ -67,13 +74,7 @@ def universitiesChooseStudents(universities: List[List[int]], students: List[Lis
 
 
 
-def lowest_preferred_candidate (universities: List[List[int]], u: int, s: int, currentStudents: List[int]) -> int:
-    currentStudents = list(currentStudents)
-    min = currentStudents[0]
-    for i in range (1,len(currentStudents)) :
-        if universities[u][currentStudents[i]]<universities[u][min] :
-            min = universities[u][currentStudents[i]]
-    return min
+
 
     #     # If w is free
     #     if w_partner[w] == -1:
