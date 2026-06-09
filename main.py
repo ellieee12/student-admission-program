@@ -26,7 +26,7 @@ def stableMarriage(schools: List[List[int]], students: List[List[int]], schools_
                 sch1 = student_partner[stu]
                 if prefers(students, stu, sch, sch1):
                     student_partner[stu] = sch
-                    school_partner[sch1].discard(stu)
+                    school_partner[sch1].remove(stu)
                     school_partner[sch].add(stu)
         nb_iterations += 1
     return school_partner, nb_iterations
