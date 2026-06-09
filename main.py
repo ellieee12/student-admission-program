@@ -60,20 +60,21 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
                     school_partner[u].remove(stu_lowest_preference)
                     school_partner[u].add(s)
                     student_partner[s] = u
-                    student_partner[stu_lowest_preference] = u
+                    student_partner[stu_lowest_preference] = None
             nb_iterations += 1
     if sum(1 for v in student_partner.values() if v is not None) < nb_students:
         print("there is not enough space for all students")
     return school_partner, nb_iterations
 
-def display_assignment_table(school_partner: List[Set], students: List[List[int]], nb_iteration: int):
+def display_assignment_table(partner: List[Set], students: List[List[int]], schools: List[List[int]], nb_iteration: int):
     rows = []
-    for sch, students_set in enumerate(school_partner):
+    for sch, students_set in enumerate(partner):
         for stu in sorted(students_set):
             rows.append({
                 "Student": stu,
                 "School":  sch,
                 "Student's preference rank": students[stu][sch] + 1,
+                "School's preference rank": schools[sch][stu] + 1,
             })
  
     df_assignments = pd.DataFrame(rows).sort_values("Student").reset_index(drop=True)
@@ -102,7 +103,6 @@ def generate_tables(n, m, c):
 
 
 if __name__ == '__main__':
-    schools, students, schools_capacity = generate_tables(9, 10, 12)
-
+    schools, students, schools_capacity = generate_tables(9, 10, 9)
     result, count = stableMarriageAlgorithm(schools, students, schools_capacity, True)
-    display_assignment_table(result, students, count)
+    display_assignment_table(result, students, schools, count)
