@@ -32,7 +32,7 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
             # the school proposes to the n first candidates according to its remaining capacity or the minimum proposition left
             for _ in range(min(schools_capacity[sch] - len(school_partner[sch]), nb_students - next_proposal[sch])):
                 #identify which student to propose to
-                stu = schools[sch][next_proposal[sch]]
+                stu = schools[sch].index(next_proposal[sch])
                 #increase proposal index by 1
                 next_proposal[sch] += 1
                 #if the student does not have a university, they are matched
@@ -55,7 +55,7 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
             s = next((s for s in range(nb_students) if student_partner[s] is None and next_proposal[s] != nb_schools), None)
 
             #identify which school to propose to
-            u = students[s][next_proposal[s]]
+            u = students[s].index(next_proposal[s])
             #avances proposal index of their unasked school
             next_proposal[s] += 1
             #If a university capacity is not yet achieved
@@ -105,13 +105,18 @@ def generate_tables(n, m, c):
         random.shuffle(row)
         table2.append(row)
 
-    a = random.sample(range(1,c),n -1 ) + [0, c]
-    table3 = [a[i+1] - a[i] for i in range(len(a) - 1)]
+    if c >= n:
+        a = sorted(random.sample(range(1, c), n - 1) + [0, c])
+        table3 = [a[i+1] - a[i] for i in range(len(a) - 1)]
+    else:
+        a = sorted(random.sample(range(1, c), c - 1) + [0, c]) if c > 1 else [0, c]
+        parts = [a[i+1] - a[i] for i in range(len(a) - 1)]
+        table3 = parts + [0] * (n - len(parts))
 
     return table1, table2, table3
 
 
 if __name__ == '__main__':
     schools, students, schools_capacity = generate_tables(9, 10, 9)
-    result, count = stableMarriageAlgorithm(schools, students, schools_capacity, True)
+    result, count = stableMarriageAlgorithm(schools, students, schools_capacity, False)
     display_assignment_table(result, students, schools, count)
