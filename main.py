@@ -117,6 +117,25 @@ def generate_tables(n, m, c):
 
 
 if __name__ == '__main__':
+    # # universities[u][s] = rank university u gives to student s (lower = more preferred)
+    # universities = [
+    #     [0, 2, 4, 5, 1, 3],  # Uni 0: prefers s0 > s4 > s1 > s5 > s2 > s3
+    #     [3, 1, 2, 4, 5, 0],  # Uni 1: prefers s1 > s2 > s5 > s0 > s3 > s4
+    #     [5, 1, 3, 0, 2, 4],  # Uni 2: prefers s3 > s1 > s4 > s2 > s5 > s0
+    #     [2, 4, 0, 3, 1, 5],  # Uni 3: prefers s2 > s4 > s0 > s3 > s1 > s5
+    # ]
+    # universities_capacity = [1, 1, 1, 1]  # total capacity = 7 > 6 students, all should be matched
+
+    # # students[s][i] = university at position i in student s's preference list
+    # students = [
+    #     [0, 3, 1, 2],  # s0: prefers Uni0 > Uni3 > Uni1 > Uni2
+    #     [1, 2, 0, 3],  # s1: prefers Uni1 > Uni2 > Uni0 > Uni3
+    #     [3, 0, 2, 1],  # s2: prefers Uni3 > Uni0 > Uni2 > Uni1
+    #     [2, 1, 3, 0],  # s3: prefers Uni2 > Uni1 > Uni3 > Uni0
+    #     [0, 1, 3, 2],  # s4: prefers Uni0 > Uni1 > Uni3 > Uni2
+    #     [1, 3, 0, 2],  # s5: prefers Uni1 > Uni3 > Uni0 > Uni2
+    # ]
+    
     schools, students, schools_capacity = generate_tables(9, 10, 9)
     result, count = stableMarriageAlgorithm(schools, students, schools_capacity, False)
     display_assignment_table(result, students, schools, count)
