@@ -53,7 +53,6 @@ def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]],
         while any(student_partner[s] is None and next_proposal[s] < nb_schools for s in range(nb_students)):
             #finds first free students in the list
             s = next((s for s in range(nb_students) if student_partner[s] is None and next_proposal[s] != nb_schools), None)
-
             #identify which school to propose to
             u = students[s].index(next_proposal[s])
             #avances proposal index of their unasked school
@@ -91,7 +90,6 @@ def display_assignment_table(partner: List[Set], students: List[List[int]], scho
     print(df_assignments.to_string())
     print(f"Number of iteration: {nb_iteration}")
 
-
 def generate_tables(n, m, c):
     table1 = []
     for _ in range(n):
@@ -114,7 +112,6 @@ def generate_tables(n, m, c):
         table3 = parts + [0] * (n - len(parts))
 
     return table1, table2, table3
-
 
 if __name__ == '__main__':
     # # universities[u][s] = rank university u gives to student s (lower = more preferred)
