@@ -16,13 +16,13 @@ def lowest_preferred_candidate(universities, u, s, currentStudents):
                 worst = candidate  # store the student INDEX, not the rank
     return worst
 
-def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]], schools_capacity: List[int], changeBidding: bool) -> Tuple[List[Set[int]], int]:
+def stableMarriageAlgorithm(schools: List[List[int]], students: List[List[int]], schools_capacity: List[int], school_bidding: bool) -> Tuple[List[Set[int]], int]:
     nb_schools = len(schools)
     nb_students = len(students)
     student_partner = defaultdict(lambda: None)
     school_partner = [set() for _ in range(nb_schools)]
     nb_iterations = 0
-    if changeBidding :
+    if school_bidding :
         # set proposal index to 0
         next_proposal = [0] * nb_schools
         # while all schools are not yet full and the schools have finished their proposals
